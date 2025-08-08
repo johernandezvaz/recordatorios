@@ -1,0 +1,228 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+{% if object %}Editar Recordatorio{% else %}Nuevo Recordatorio{% endif %} - Sistema de Calidad
+{% endblock %}
+
+{% block breadcrumb %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'recordatorio_list' %}">Recordatorios</a></li>
+        <li class="breadcrumb-item active">
+            {% if object %}Editar{% else %}Nuevo{% endif %}
+        </li>
+    </ol>
+</nav>
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        <div class="card shadow">
+            <div class="card-header bg-success text-white">
+                <h6 class="m-0 font-weight-bold">
+                    <i class="bi bi-{% if object %}pencil{% else %}calendar-plus{% endif %} me-2"></i>
+                    {% if object %}Editar Recordatorio de Revisión{% else %}Nuevo Recordatorio de Revisión{% endif %}
+                </h6>
+            </div>
+            <div class="card-body">
+                <form method="post" novalidate>
+                    {% csrf_token %}
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.documento.id_for_label }}" class="form-label">
+                                <i class="bi bi-file-text me-1"></i>{{ form.documento.label }}
+                                <span class="text-danger">*</span>
+                            </label>
+                            {{ form.documento }}
+                            {% if form.documento.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.documento.errors.0 }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-3 mb-3">
+                            <label for="{{ form.estado.id_for_label }}" class="form-label">
+                                <i class="bi bi-flag me-1"></i>{{ form.estado.label }}
+                            </label>
+                            {{ form.estado }}
+                            {% if form.estado.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.estado.errors.0 }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-3 mb-3">
+                            <label for="{{ form.prioridad.id_for_label }}" class="form-label">
+                                <i class="bi bi-exclamation-triangle me-1"></i>{{ form.prioridad.label }}
+                            </label>
+                            {{ form.prioridad }}
+                            {% if form.prioridad.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.prioridad.errors.0 }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.fecha_revision.id_for_label }}" class="form-label">
+                                <i class="bi bi-calendar me-1"></i>{{ form.fecha_revision.label }}
+                                <span class="text-danger">*</span>
+                            </label>
+                            {{ form.fecha_revision }}
+                            {% if form.fecha_revision.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.fecha_revision.errors.0 }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.fecha_proxima_revision.id_for_label }}" class="form-label">
+                                <i class="bi bi-calendar-plus me-1"></i>{{ form.fecha_proxima_revision.label }}
+                            </label>
+                            {{ form.fecha_proxima_revision }}
+                            {% if form.fecha_proxima_revision.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.fecha_proxima_revision.errors.0 }}
+                                </div>
+                            {% endif %}
+                            <div class="form-text">
+                                Si no se especifica, se calculará automáticamente (30 días después de la revisión)
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.observaciones.id_for_label }}" class="form-label">
+                            <i class="bi bi-chat-square-text me-1"></i>{{ form.observaciones.label }}
+                        </label>
+                        {{ form.observaciones }}
+                        {% if form.observaciones.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.observaciones.errors.0 }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.hallazgos.id_for_label }}" class="form-label">
+                                <i class="bi bi-search me-1"></i>{{ form.hallazgos.label }}
+                            </label>
+                            {{ form.hallazgos }}
+                            {% if form.hallazgos.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.hallazgos.errors.0 }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.acciones_correctivas.id_for_label }}" class="form-label">
+                                <i class="bi bi-tools me-1"></i>{{ form.acciones_correctivas.label }}
+                            </label>
+                            {{ form.acciones_correctivas }}
+                            {% if form.acciones_correctivas.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.acciones_correctivas.errors.0 }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <hr>
+                    
+                    <div class="d-flex justify-content-between">
+                        <a href="{% if object %}{{ object.get_absolute_url }}{% else %}{% url 'recordatorio_list' %}{% endif %}" 
+                           class="btn btn-secondary">
+                            <i class="bi bi-arrow-left me-1"></i>Cancelar
+                        </a>
+                        
+                        <button type="submit" class="btn btn-success">
+                            <i class="bi bi-save me-1"></i>
+                            {% if object %}Actualizar{% else %}Crear{% endif %} Recordatorio
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Calcular automáticamente la próxima fecha de revisión
+    const fechaRevision = document.getElementById('{{ form.fecha_revision.id_for_label }}');
+    const fechaProxima = document.getElementById('{{ form.fecha_proxima_revision.id_for_label }}');
+    
+    if (fechaRevision && fechaProxima) {
+        fechaRevision.addEventListener('change', function() {
+            if (this.value && !fechaProxima.value) {
+                const fecha = new Date(this.value);
+                fecha.setDate(fecha.getDate() + 30); // Agregar 30 días
+                
+                // Formatear para datetime-local
+                const year = fecha.getFullYear();
+                const month = String(fecha.getMonth() + 1).padStart(2, '0');
+                const day = String(fecha.getDate()).padStart(2, '0');
+                const hours = String(fecha.getHours()).padStart(2, '0');
+                const minutes = String(fecha.getMinutes()).padStart(2, '0');
+                
+                fechaProxima.value = `${year}-${month}-${day}T${hours}:${minutes}`;
+            }
+        });
+    }
+    
+    // Validación de fechas
+    if (fechaRevision && fechaProxima) {
+        function validarFechas() {
+            if (fechaRevision.value && fechaProxima.value) {
+                const revision = new Date(fechaRevision.value);
+                const proxima = new Date(fechaProxima.value);
+                
+                if (proxima <= revision) {
+                    fechaProxima.setCustomValidity('La fecha de próxima revisión debe ser posterior a la fecha de revisión actual');
+                } else {
+                    fechaProxima.setCustomValidity('');
+                }
+            }
+        }
+        
+        fechaRevision.addEventListener('change', validarFechas);
+        fechaProxima.addEventListener('change', validarFechas);
+    }
+    
+    // Autocompletar observaciones basadas en el estado
+    const estadoField = document.getElementById('{{ form.estado.id_for_label }}');
+    const observacionesField = document.getElementById('{{ form.observaciones.id_for_label }}');
+    
+    if (estadoField && observacionesField) {
+        estadoField.addEventListener('change', function() {
+            if (!observacionesField.value) {
+                switch(this.value) {
+                    case 'pendiente':
+                        observacionesField.value = 'Revisión programada y pendiente de ejecución.';
+                        break;
+                    case 'en_proceso':
+                        observacionesField.value = 'Revisión iniciada, en proceso de evaluación.';
+                        break;
+                    case 'completado':
+                        observacionesField.value = 'Revisión completada satisfactoriamente.';
+                        break;
+                }
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

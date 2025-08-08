@@ -1,0 +1,216 @@
+/* Estilos personalizados para el Sistema de Calidad */
+
+/* Variables de colores */
+:root {
+    --primary-color: #007bff;
+    --secondary-color: #6c757d;
+    --success-color: #28a745;
+    --danger-color: #dc3545;
+    --warning-color: #ffc107;
+    --info-color: #17a2b8;
+    --light-color: #f8f9fa;
+    --dark-color: #343a40;
+}
+
+/* Estilos generales */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+}
+
+/* Navbar personalizado */
+.navbar-brand {
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+/* Cards con bordes de color */
+.border-left-primary {
+    border-left: 5px solid var(--primary-color) !important;
+}
+
+.border-left-success {
+    border-left: 5px solid var(--success-color) !important;
+}
+
+.border-left-info {
+    border-left: 5px solid var(--info-color) !important;
+}
+
+.border-left-warning {
+    border-left: 5px solid var(--warning-color) !important;
+}
+
+/* Estilos para estadísticas */
+.text-xs {
+    font-size: 0.75rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    color: var(--secondary-color);
+}
+
+/* Hover effects para botones */
+.btn {
+    transition: all 0.3s ease;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+/* Estilos para la tabla */
+.table-hover tbody tr:hover {
+    background-color: rgba(0,123,255,0.05);
+}
+
+/* Badges personalizados */
+.badge {
+    font-size: 0.75em;
+    font-weight: 600;
+}
+
+/* Cards con sombra */
+.card {
+    border: none;
+    border-radius: 15px;
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+
+/* Estilos para alertas */
+.alert {
+    border-radius: 10px;
+    border: none;
+}
+
+/* Progress bars personalizadas */
+.progress {
+    background-color: rgba(0,0,0,0.1);
+    border-radius: 20px;
+}
+
+.progress-bar {
+    border-radius: 20px;
+}
+
+/* Formularios */
+.form-control, .form-select {
+    border-radius: 10px;
+    border: 1px solid #e3e6f0;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,0.25);
+}
+
+/* Botones de acción rápida */
+.btn-group-sm > .btn, .btn-sm {
+    border-radius: 8px;
+}
+
+/* Footer */
+footer {
+    margin-top: auto;
+}
+
+/* Estilos responsivos */
+@media (max-width: 768px) {
+    .card {
+        margin-bottom: 1rem;
+    }
+    
+    .table-responsive {
+        font-size: 0.875rem;
+    }
+    
+    .btn-group-sm > .btn {
+        padding: 0.25rem 0.5rem;
+    }
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.card {
+    animation: fadeIn 0.5s ease-out;
+}
+
+/* Estilos para estados de documentos */
+.badge.bg-success { background-color: var(--success-color) !important; }
+.badge.bg-warning { background-color: var(--warning-color) !important; color: #000; }
+.badge.bg-danger { background-color: var(--danger-color) !important; }
+.badge.bg-info { background-color: var(--info-color) !important; }
+.badge.bg-secondary { background-color: var(--secondary-color) !important; }
+
+/* Filas de tabla con estados especiales */
+.table-danger {
+    --bs-table-accent-bg: rgba(220,53,69,0.1);
+}
+
+.table-warning {
+    --bs-table-accent-bg: rgba(255,193,7,0.1);
+}
+
+/* Botones con iconos */
+.btn i {
+    margin-right: 0.25rem;
+}
+
+/* Estilos para el dashboard */
+.display-1, .display-4, .display-6 {
+    font-weight: 300;
+}
+
+/* Loading spinner personalizado */
+.spinner-border-primary {
+    color: var(--primary-color);
+}
+
+/* Mejoras de accesibilidad */
+.btn:focus, .form-control:focus, .form-select:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(0,123,255,0.25);
+}
+
+/* Estilos para pantallas pequeñas */
+@media (max-width: 576px) {
+    .container {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+    
+    .card-body {
+        padding: 1rem;
+    }
+    
+    .btn-group .btn {
+        font-size: 0.75rem;
+        padding: 0.25rem 0.5rem;
+    }
+}
+
+/* Estilos específicos para formularios de registro */
+.form-control.is-valid {
+    border-color: #28a745;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%2328a745' d='m2.3 6.73.94-.94 1.38 1.38 3.02-3.02.94.94L2.97 8.84z'/%3e%3c/svg%3e");
+}
+
+.form-control.is-invalid {
+    border-color: #dc3545;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath d='m5.8 4.6 2.4 2.4M8.2 4.6l-2.4 2.4'/%3e%3c/svg%3e");
+}
+
+/* Animación para campos válidos/inválidos */
+.form-control {
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out, background-image 0.15s ease-in-out;
+}

@@ -1,0 +1,259 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Dashboard - Sistema de Calidad{% endblock %}
+
+{% block page_header %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="h3 mb-0">Dashboard</h1>
+        <p class="text-muted">Resumen del sistema de calidad</p>
+    </div>
+    <div>
+        <a href="{% url 'recordatorio_crear' %}" class="btn btn-primary">
+            <i class="bi bi-plus-lg me-1"></i>Nuevo Recordatorio
+        </a>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<!-- Tarjetas de estadísticas -->
+<div class="row mb-4">
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-primary shadow h-100">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                            Total Documentos
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ total_documentos }}</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="bi bi-file-text fa-2x text-primary"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-success shadow h-100">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                            Documentos Aprobados
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ documentos_activos }}</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="bi bi-check-circle fa-2x text-success"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-info shadow h-100">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                            Total Recordatorios
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ total_recordatorios }}</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="bi bi-calendar-check fa-2x text-info"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-warning shadow h-100">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                            Pendientes
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ recordatorios_pendientes }}</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="bi bi-clock fa-2x text-warning"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Alertas importantes -->
+{% if recordatorios_vencidos %}
+<div class="alert alert-danger" role="alert">
+    <h5 class="alert-heading"><i class="bi bi-exclamation-triangle me-2"></i>¡Atención! Recordatorios Vencidos</h5>
+    <p>Tienes <strong>{{ recordatorios_vencidos.count }}</strong> recordatorios vencidos que requieren atención inmediata.</p>
+    <a href="{% url 'recordatorio_list' %}?vencidos=1" class="btn btn-outline-danger btn-sm">Ver Recordatorios Vencidos</a>
+</div>
+{% endif %}
+
+<div class="row">
+    <!-- Recordatorios próximos a vencer -->
+    <div class="col-lg-8 mb-4">
+        <div class="card shadow">
+            <div class="card-header bg-warning text-white">
+                <h6 class="m-0 font-weight-bold">
+                    <i class="bi bi-calendar-x me-2"></i>Recordatorios Próximos a Vencer
+                </h6>
+            </div>
+            <div class="card-body">
+                {% if recordatorios_proximos %}
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Documento</th>
+                                <th>Próxima Revisión</th>
+                                <th>Días Restantes</th>
+                                <th>Prioridad</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for recordatorio in recordatorios_proximos %}
+                            <tr>
+                                <td>
+                                    <a href="{{ recordatorio.documento.get_absolute_url }}" class="text-decoration-none">
+                                        {{ recordatorio.documento.titulo|truncatechars:40 }}
+                                    </a>
+                                </td>
+                                <td>{{ recordatorio.fecha_proxima_revision|date:"d/m/Y H:i" }}</td>
+                                <td>
+                                    {% if recordatorio.dias_hasta_revision < 0 %}
+                                        <span class="badge bg-danger">Vencido</span>
+                                    {% elif recordatorio.dias_hasta_revision <= 3 %}
+                                        <span class="badge bg-warning">{{ recordatorio.dias_hasta_revision }} días</span>
+                                    {% else %}
+                                        <span class="badge bg-info">{{ recordatorio.dias_hasta_revision }} días</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <span class="badge bg-{% if recordatorio.prioridad == 'critica' %}danger{% elif recordatorio.prioridad == 'alta' %}warning{% elif recordatorio.prioridad == 'media' %}info{% else %}secondary{% endif %}">
+                                        {{ recordatorio.get_prioridad_display }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <a href="{{ recordatorio.get_absolute_url }}" class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="text-center mt-3">
+                    <a href="{% url 'recordatorio_list' %}" class="btn btn-outline-warning">Ver Todos los Recordatorios</a>
+                </div>
+                {% else %}
+                <div class="text-center text-muted py-4">
+                    <i class="bi bi-check-circle display-4"></i>
+                    <p class="mt-2">No hay recordatorios próximos a vencer</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Documentos por tipo -->
+    <div class="col-lg-4 mb-4">
+        <div class="card shadow">
+            <div class="card-header bg-info text-white">
+                <h6 class="m-0 font-weight-bold">
+                    <i class="bi bi-pie-chart me-2"></i>Documentos por Tipo
+                </h6>
+            </div>
+            <div class="card-body">
+                {% if documentos_por_tipo %}
+                {% for tipo in documentos_por_tipo %}
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <span class="small">{{ tipo.nombre }}</span>
+                        <span class="small font-weight-bold">{{ tipo.total_documentos }}</span>
+                    </div>
+                    <div class="progress" style="height: 8px;">
+                        <div class="progress-bar bg-info" role="progressbar" 
+                             style="width: {% widthratio tipo.total_documentos total_documentos 100 %}%">
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+                {% else %}
+                <div class="text-center text-muted">
+                    <p>No hay documentos registrados</p>
+                </div>
+                {% endif %}
+                
+                <div class="text-center mt-3">
+                    <a href="{% url 'documento_list' %}" class="btn btn-outline-info btn-sm">Ver Documentos</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Acciones rápidas -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h6 class="m-0 font-weight-bold">
+                    <i class="bi bi-lightning me-2"></i>Acciones Rápidas
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3 mb-3">
+                        <a href="{% url 'documento_crear' %}" class="btn btn-outline-primary w-100">
+                            <i class="bi bi-file-plus display-6"></i>
+                            <p class="mt-2 mb-0">Crear Documento</p>
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <a href="{% url 'recordatorio_crear' %}" class="btn btn-outline-success w-100">
+                            <i class="bi bi-calendar-plus display-6"></i>
+                            <p class="mt-2 mb-0">Programar Revisión</p>
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <a href="{% url 'documento_list' %}" class="btn btn-outline-info w-100">
+                            <i class="bi bi-search display-6"></i>
+                            <p class="mt-2 mb-0">Buscar Documentos</p>
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <a href="{% url 'recordatorio_list' %}?estado=pendiente" class="btn btn-outline-warning w-100">
+                            <i class="bi bi-list-check display-6"></i>
+                            <p class="mt-2 mb-0">Revisiones Pendientes</p>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Auto-refresh cada 5 minutos para mantener los datos actualizados
+setTimeout(function() {
+    location.reload();
+}, 300000);
+</script>
+{% endblock %}

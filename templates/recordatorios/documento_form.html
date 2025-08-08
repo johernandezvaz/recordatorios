@@ -1,0 +1,185 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+{% if object %}Editar Documento{% else %}Nuevo Documento{% endif %} - Sistema de Calidad
+{% endblock %}
+
+{% block breadcrumb %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'documento_list' %}">Documentos</a></li>
+        <li class="breadcrumb-item active">
+            {% if object %}Editar{% else %}Nuevo{% endif %}
+        </li>
+    </ol>
+</nav>
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h6 class="m-0 font-weight-bold">
+                    <i class="bi bi-{% if object %}pencil{% else %}file-plus{% endif %} me-2"></i>
+                    {% if object %}Editar Documento{% else %}Nuevo Documento{% endif %}
+                </h6>
+            </div>
+            <div class="card-body">
+                <form method="post" novalidate>
+                    {% csrf_token %}
+                    
+                    <div class="row">
+                        <div class="col-md-8 mb-3">
+                            <label for="{{ form.titulo.id_for_label }}" class="form-label">
+                                <i class="bi bi-type me-1"></i>{{ form.titulo.label }}
+                                <span class="text-danger">*</span>
+                            </label>
+                            {{ form.titulo }}
+                            {% if form.titulo.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.titulo.errors.0 }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-4 mb-3">
+                            <label for="{{ form.codigo_documento.id_for_label }}" class="form-label">
+                                <i class="bi bi-hash me-1"></i>{{ form.codigo_documento.label }}
+                                <span class="text-danger">*</span>
+                            </label>
+                            {{ form.codigo_documento }}
+                            {% if form.codigo_documento.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.codigo_documento.errors.0 }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.descripcion.id_for_label }}" class="form-label">
+                            <i class="bi bi-text-paragraph me-1"></i>{{ form.descripcion.label }}
+                        </label>
+                        {{ form.descripcion }}
+                        {% if form.descripcion.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.descripcion.errors.0 }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label for="{{ form.tipo.id_for_label }}" class="form-label">
+                                <i class="bi bi-tag me-1"></i>{{ form.tipo.label }}
+                                <span class="text-danger">*</span>
+                            </label>
+                            {{ form.tipo }}
+                            {% if form.tipo.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.tipo.errors.0 }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-4 mb-3">
+                            <label for="{{ form.version.id_for_label }}" class="form-label">
+                                <i class="bi bi-journal-code me-1"></i>{{ form.version.label }}
+                            </label>
+                            {{ form.version }}
+                            {% if form.version.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.version.errors.0 }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-4 mb-3">
+                            <label for="{{ form.estado.id_for_label }}" class="form-label">
+                                <i class="bi bi-flag me-1"></i>{{ form.estado.label }}
+                            </label>
+                            {{ form.estado }}
+                            {% if form.estado.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.estado.errors.0 }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <hr>
+                    
+                    <div class="d-flex justify-content-between">
+                        <a href="{% if object %}{{ object.get_absolute_url }}{% else %}{% url 'documento_list' %}{% endif %}" 
+                           class="btn btn-secondary">
+                            <i class="bi bi-arrow-left me-1"></i>Cancelar
+                        </a>
+                        
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-save me-1"></i>
+                            {% if object %}Actualizar{% else %}Crear{% endif %} Documento
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        {% if object %}
+        <div class="card shadow mt-4">
+            <div class="card-header bg-info text-white">
+                <h6 class="m-0 font-weight-bold">
+                    <i class="bi bi-info-circle me-2"></i>Información Adicional
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>Creado por:</strong> {{ object.creado_por.get_full_name|default:object.creado_por.username }}</p>
+                        <p><strong>Fecha de creación:</strong> {{ object.fecha_creacion|date:"d/m/Y H:i" }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>Última modificación:</strong> {{ object.fecha_modificacion|date:"d/m/Y H:i" }}</p>
+                        <p><strong>ID del documento:</strong> {{ object.pk }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Validación en tiempo real del código de documento
+    const codigoField = document.getElementById('{{ form.codigo_documento.id_for_label }}');
+    if (codigoField) {
+        codigoField.addEventListener('input', function() {
+            let valor = this.value.toUpperCase();
+            // Formato sugerido: LAB-DOC-001
+            if (valor && !valor.match(/^[A-Z]{2,4}-[A-Z]{2,4}-\d{3}$/)) {
+                this.setCustomValidity('Formato sugerido: LAB-DOC-001');
+            } else {
+                this.setCustomValidity('');
+            }
+        });
+    }
+    
+    // Auto-sugerir código basado en el título
+    const tituloField = document.getElementById('{{ form.titulo.id_for_label }}');
+    if (tituloField && !{{ object|yesno:"true,false" }}) {
+        tituloField.addEventListener('blur', function() {
+            if (this.value && !codigoField.value) {
+                const palabras = this.value.split(' ').slice(0, 2);
+                const acronimo = palabras.map(p => p.charAt(0).toUpperCase()).join('');
+                codigoField.value = `LAB-${acronimo}-001`;
+            }
+        });
+    }
+});
+</script>
+{% endblock %}
